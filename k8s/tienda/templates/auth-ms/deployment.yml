@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-ms
+  labels:
+    app: auth-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-ms
+  template:
+    metadata:
+      labels:
+        app: auth-ms
+    spec:
+      containers:
+        - name: auth-ms
+          image: southamerica-west1-docker.pkg.dev/dev-microservices-433821/image-registry/auth-ms
+          env:
+            - name: PORT
+              value: "3000"
+            - name: NATS_SERVERS
+              value: "nats://nats"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: JWT_SECRET
+          resources: {}
